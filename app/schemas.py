@@ -15,6 +15,17 @@ class UserCreate(BaseModel):
     class Config:
         from_attributes = True
 
+class GetPath(BaseModel):
+    path: str
+    class Config:
+        from_attributes = True
+
+
+class CeleryOutResponse(BaseModel):
+    id: UUID
+    class Config:
+        from_attributes = True
+
 
 class OCRTitleOut(BaseModel):
     id: UUID

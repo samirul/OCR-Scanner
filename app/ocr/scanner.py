@@ -5,7 +5,7 @@ import toml
 from typing import Any
 from PIL import Image
 from pdf2image import convert_from_path
-from ocr.model_ocr import run_ocr_model
+from app.ocr.model_ocr import run_ocr_model
 
 with open('config.toml', 'r', encoding='utf-8') as f:
     config = toml.load(f)
