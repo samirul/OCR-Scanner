@@ -39,3 +39,11 @@ class OCRDataCreated(BaseModel):
     data: str
     class Config:
         from_attributes = True
+
+
+class OCRTitlesOut(BaseModel):
+    id: UUID
+    title: str
+    user_id: UUID
+    class Config:
+        from_attributes = True
