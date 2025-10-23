@@ -1,6 +1,6 @@
 from typing import List
 from fastapi import APIRouter, Depends, status, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload, selectinload
 from sqlalchemy import select
 from app import models, schemas
 from app.database import get_db
@@ -22,7 +22,15 @@ async def get_ocr_titles(user_id: str, db: Session = Depends(get_db)):
         return titles
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No OCR titles found")
 
- 
+
+@router.get("/data/{title_id}", status_code=status.HTTP_200_OK, response_model=List[schemas.OCRDataDetailedOut])
+async def get_ocr_data(title_id: str, db: Session = Depends(get_db)):
+    if (data := db.scalars(select(models.OCRTitle)
+        .where(models.OCRTitle.id == title_id)
+        .options(selectinload(models.OCRTitle.ocr_data),
+                 joinedload(models.OCRTitle.user)))):
+        return [data.unique().first()]
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No OCR data found")
 
 
 

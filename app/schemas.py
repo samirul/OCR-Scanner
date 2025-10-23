@@ -47,3 +47,19 @@ class OCRTitlesOut(BaseModel):
     user_id: UUID
     class Config:
         from_attributes = True
+
+class OCRDataOut(BaseModel):
+    id: UUID
+    page: int
+    data: str
+    class Config:
+        from_attributes = True
+
+class OCRDataDetailedOut(BaseModel):
+    id: UUID
+    title: str
+    user: UserOutResponse
+    ocr_data: List[OCRDataOut]
+
+    class Config:
+        from_attributes = True

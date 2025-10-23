@@ -23,7 +23,7 @@ class OCRTitle(Base):
     title: Mapped[str] = mapped_column(String, nullable=False)
     user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=text('now()'))
-    ocr_data: Mapped[List["OCRData"]] = relationship(back_populates="ocr_title")
+    ocr_data: Mapped[List["OCRData"]] = relationship(back_populates="ocr_title", order_by="OCRData.page")
     user: Mapped["User"] = relationship(back_populates="ocr_title")
 
 class OCRData(Base):
