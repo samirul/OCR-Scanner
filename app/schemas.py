@@ -59,6 +59,7 @@ class OCRDataDetailedOut(BaseModel):
     id: UUID
     title: str
     user: UserOutResponse
+    created_at: datetime
     ocr_data: List[OCRDataOut]
 
     class Config:
