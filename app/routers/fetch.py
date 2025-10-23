@@ -20,7 +20,7 @@ async def ocr_celery_task(path: schemas.GetPath):
 async def get_ocr_titles(user_id: str, db: Session = Depends(get_db)):
     if (titles := db.scalars(select(models.OCRTitle).where(models.OCRTitle.user_id == user_id)).all()):
         return titles
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No OCR titles found for user_id: {user_id}")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No OCR titles found")
 
  
 
