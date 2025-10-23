@@ -22,7 +22,7 @@ class GetPath(BaseModel):
 
 
 class CeleryOutResponse(BaseModel):
-    id: UUID
+    task_id: UUID
     class Config:
         from_attributes = True
 
