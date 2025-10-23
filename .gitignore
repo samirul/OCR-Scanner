@@ -211,3 +211,6 @@ python-poppler/
 
 # temp 
 PP-StructureV3.yaml
+
+# output
+output/

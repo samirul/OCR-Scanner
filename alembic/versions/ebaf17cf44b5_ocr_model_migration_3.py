@@ -1,8 +1,8 @@
-"""OCR model migration 2
+"""OCR model migration 3
 
-Revision ID: 72eca5d38062
-Revises: 9c0b38fa582d
-Create Date: 2025-10-10 11:40:54.821708
+Revision ID: ebaf17cf44b5
+Revises: a042e9076e47
+Create Date: 2025-10-12 08:32:09.521886
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '72eca5d38062'
-down_revision: Union[str, Sequence[str], None] = '9c0b38fa582d'
+revision: str = 'ebaf17cf44b5'
+down_revision: Union[str, Sequence[str], None] = 'a042e9076e47'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

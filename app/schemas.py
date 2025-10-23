@@ -1,6 +1,6 @@
 from uuid import UUID
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel, EmailStr
 
 class UserOutResponse(BaseModel):
@@ -27,25 +27,15 @@ class CeleryOutResponse(BaseModel):
         from_attributes = True
 
 
-class OCRTitleOut(BaseModel):
-    id: UUID
+class OCRTitleCreated(BaseModel):
     title: str
+    user_id: UUID
     class Config:
         from_attributes = True
 
-class OCRDataOut(BaseModel):
-    id: UUID
+class OCRDataCreated(BaseModel):
+    title_id: UUID
     page: int
     data: str
-    class Config:
-        from_attributes = True
-
-class OCRItemsOut(BaseModel):
-    id: UUID
-    created_at: datetime
-    ocr_title: OCRTitleOut
-    user: UserOutResponse
-    ocr_data: List[OCRDataOut]
-
     class Config:
         from_attributes = True

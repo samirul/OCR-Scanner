@@ -13,8 +13,7 @@ class User(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
     email: Mapped[str] = mapped_column(String, nullable=False, unique=True)
-
-    ocr_items: Mapped[List["OCRItems"]] = relationship(back_populates="user")
+    ocr_title: Mapped[List["OCRTitle"]] = relationship(back_populates="user")
 
 
 class OCRTitle(Base):
@@ -22,28 +21,16 @@ class OCRTitle(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
     title: Mapped[str] = mapped_column(String, nullable=False)
-
-    ocr_items: Mapped[List["OCRItems"]] = relationship(back_populates="ocr_title")
-
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=text('now()'))
+    ocr_data: Mapped[List["OCRData"]] = relationship(back_populates="ocr_title")
+    user: Mapped["User"] = relationship(back_populates="ocr_title")
 
 class OCRData(Base):
     __tablename__ = "ocr_data"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
-    ocr_items_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ocr_items.id", ondelete="CASCADE"), nullable=False)
+    title_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ocr_title.id", ondelete="CASCADE"), nullable=False)
     page: Mapped[int] = mapped_column(Integer, nullable=False)
     data: Mapped[str] = mapped_column(String, nullable=False)
-
-    ocr_items: Mapped[list["OCRItems"]] = relationship(back_populates="ocr_data")
-
-class OCRItems(Base):
-    __tablename__ = "ocr_items"
-
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False) # # pylint: disable=unsubscriptable-object
-    title_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ocr_title.id", ondelete="CASCADE"), nullable=False) # # pylint: disable=unsubscriptable-object
-    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("user.id", ondelete="CASCADE"), nullable=False) # # pylint: disable=unsubscriptable-object
-    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=text('now()')) # # pylint: disable=unsubscriptable-object
-
-    ocr_title: Mapped["OCRTitle"] = relationship()
-    user: Mapped["User"] = relationship()
-    ocr_data: Mapped[List["OCRData"]] = relationship()
+    ocr_title: Mapped["OCRTitle"] = relationship(back_populates="ocr_data")
