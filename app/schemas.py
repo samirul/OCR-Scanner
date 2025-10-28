@@ -64,3 +64,6 @@ class OCRDataDetailedOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+class TokenData(BaseModel):
+    id: Optional[str] = None
