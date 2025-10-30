@@ -29,19 +29,21 @@ async def ocr_celery_task(path: schemas.GetPath, current_user: models.User = Dep
 
 @router.get("/titles/", status_code=status.HTTP_200_OK, response_model=List[schemas.OCRTitlesOut])
 async def get_ocr_titles(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    data = db.scalars(select(models.OCRTitle).where(models.OCRTitle.user_id == str(current_user.id))).all()
-    if data is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No OCR titles found")
-    return data
+    if data := db.scalars(
+        select(models.OCRTitle).where(
+            models.OCRTitle.user_id == str(current_user.id)
+        )
+    ).all():
+        return data
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No OCR titles found")
 
 
 @router.get("/data/{title_id}", status_code=status.HTTP_200_OK, response_model=List[schemas.OCRDataDetailedOut])
 async def get_ocr_data(title_id: str, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     check_valid_uuid(title_id)
     data = await query_ocr_data(db, title_id, str(current_user.id))
-    query = data.unique().first()
-    if query is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No OCR data found")
-    return [query]
+    if query := data.unique().first():
+        return [query]
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No OCR data found")
 
 
