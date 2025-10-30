@@ -43,9 +43,9 @@ def resize_images(image: Any, max_size: tuple[int, int] = (MAX_WIDTH, MAX_HEIGHT
     return image.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
 
-def get_model_prediction(index, page_image, pipeline):
+def get_model_prediction(index, page_image, pipeline, user_id: str, random_uuid:str):
     resized_image = resize_images(page_image)
-    temp_image_path = os.path.join("images/", f"page_{index}.png")
+    temp_image_path = os.path.join(f"images/{user_id}/{random_uuid}/", f"page_{index}.png")
     resized_image.save(temp_image_path, "PNG")
     return pipeline.predict(str(temp_image_path))
 
@@ -57,20 +57,20 @@ def out_result(index, result):
     return markdown.markdown(markdown_text)
 
 
-def process_text(images, pipeline):
+def process_text(images, pipeline, user_id: str, random_uuid: str):
     results_data = {}
     for index, page_image in enumerate(images, start=1):
-        results = get_model_prediction(index, page_image, pipeline)
+        results = get_model_prediction(index, page_image, pipeline, user_id, random_uuid)
         for result in results:
             result_html_content = out_result(index, result)
             results_data[f"{index}"] = str(result_html_content)
-        os.remove(f"images/page_{index}.png")
+        os.remove(f"images/{user_id}/{random_uuid}/page_{index}.png")
         clear_data(page_image)
     return results_data
 
 
-def fetch_text(file_path):
+def fetch_text(file_path, user_id: str, random_uuid: str):
     pipeline = run_ocr_model()
-    os.makedirs('images/', exist_ok=True)
+    os.makedirs(f'images/{user_id}/{random_uuid}/', exist_ok=True)
     images = convert_from_path(file_path)
-    return process_text(images, pipeline)
+    return process_text(images, pipeline, user_id, random_uuid)

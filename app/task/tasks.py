@@ -1,8 +1,14 @@
+import contextlib
+import shutil
 import uuid
 from celery import shared_task
 from app import models, schemas
 from app.ocr.scanner import fetch_text
 from app.database import SessionLocal
+
+def remove_file(path: str):
+    with contextlib.suppress(Exception):
+        shutil.rmtree(path)
 
 
 def create_ocr_title_data(path: str) -> str:
@@ -36,21 +42,20 @@ def insert_data_ocr_data(data: schemas.OCRDataCreated):
 
 def save_data_ocr_title(path: str, user_id:str):
     title = create_ocr_title_data(path)
-
     obj = schemas.OCRTitleCreated(title=title, user_id=uuid.UUID(user_id))
     return insert_data_ocr_title(obj)
 
 
-def get_data_from_data_items(path: str):
-    data = fetch_text(path)
+def get_data_from_data_items(path: str, user_id: str, random_uuid: str):
+    data = fetch_text(path, user_id, random_uuid)
     if data is None:
         raise ValueError(f"No OCR data found for path: {path}")
     return data
 
 
-def save_data_ocr_data(path: str, user_id: str):
+def save_data_ocr_data(path: str, user_id: str, random_uuid: str):
     results = {}
-    data = get_data_from_data_items(path)
+    data = get_data_from_data_items(path, user_id, random_uuid)
     text_data = save_data_ocr_title(path, user_id)
     for key, val in data.items():
         obj = schemas.OCRDataCreated( title_id=text_data.id, page=key, data=val)
@@ -61,4 +66,7 @@ def save_data_ocr_data(path: str, user_id: str):
 
 @shared_task(bind=True)
 def excecute_ocr_pdf_extraction_task(self, path: str, user_id: str):
-    return save_data_ocr_data(path, user_id)
+    random_uuid = uuid.uuid4()
+    result = save_data_ocr_data(path, user_id, str(random_uuid))
+    remove_file(f"images/{user_id}/{random_uuid}/")
+    return result
