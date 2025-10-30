@@ -52,8 +52,8 @@ def get_model_prediction(index, page_image, pipeline, user_id: str, random_uuid:
 def out_result(index, result):
     result.save_to_markdown(save_path="output")
     file_path = os.path.join("output/", f"page_{index}.md")
-    with open(file_path, 'r', encoding='utf-8') as f:
-        markdown_text = f.read()
+    with open(file_path, 'r', encoding='utf-8') as file:
+        markdown_text = file.read()
     return markdown.markdown(markdown_text)
 
 
