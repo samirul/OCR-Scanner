@@ -49,16 +49,16 @@ def get_data_from_data_items(path: str):
 
 
 def save_data_ocr_data(path: str, user_id: str):
+    results = {}
     data = get_data_from_data_items(path)
     text_data = save_data_ocr_title(path, user_id)
     for key, val in data.items():
         obj = schemas.OCRDataCreated( title_id=text_data.id, page=key, data=val)
-        insert_data_ocr_data(obj)
+        result = insert_data_ocr_data(obj)
+        results['title_id'] = result.title_id
+    return results
 
 
 @shared_task(bind=True)
 def excecute_ocr_pdf_extraction_task(self, path: str, user_id: str):
-    save_data_ocr_data(path, user_id)
-    
-
-    
+    return save_data_ocr_data(path, user_id)
